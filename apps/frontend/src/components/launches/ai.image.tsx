@@ -187,7 +187,7 @@ export const AiImage: FC<{
             </svg>
           </div>
           <div className="text-[10px] font-[600] iconBreak:hidden block">
-            {t('ai', 'AI')} Image
+            {t('ai_image', 'AI Image')}
           </div>
         </div>
       </div>

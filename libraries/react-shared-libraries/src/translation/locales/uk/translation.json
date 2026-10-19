@@ -883,5 +883,16 @@
   "hubspot_installed_description": "Підключіть потрібні канали тут, у Postiz. Потім у HubSpot відкрийте Agent Hub > Agent Builder, додайте інструмент, виберіть Postiz MCP у розділі MCP Servers і натисніть Connect and add.",
   "timezone": "Часовий пояс",
   "automatic_timezone": "Автоматично ({{timezone}})",
-  "could_not_save_timezone": "Не вдалося зберегти часовий пояс"
+  "could_not_save_timezone": "Не вдалося зберегти часовий пояс",
+  "agent": "Агент",
+  "agent_placeholder": "Напишіть повідомлення...",
+  "agent_error": "❌ Сталася помилка. Спробуйте ще раз.",
+  "agent_stop_generating": "Зупинити генерацію",
+  "agent_regenerate_response": "Згенерувати відповідь ще раз",
+  "agent_copy_to_clipboard": "Копіювати в буфер обміну",
+  "agent_thumbs_up": "Подобається",
+  "agent_thumbs_down": "Не подобається",
+  "agent_copied": "Скопійовано!",
+  "ai_image": "ШІ-зображення",
+  "ai_video": "ШІ-відео"
 }

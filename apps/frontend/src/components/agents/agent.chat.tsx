@@ -85,6 +85,23 @@ You can see your previous conversations from the right menu.
 
 You can also use me as an MCP Server, check Settings >> Agents / Dev
 `),
+              placeholder: t('agent_placeholder', 'Type a message...'),
+              error: t(
+                'agent_error',
+                '❌ An error occurred. Please try again.'
+              ),
+              stopGenerating: t('agent_stop_generating', 'Stop generating'),
+              regenerateResponse: t(
+                'agent_regenerate_response',
+                'Regenerate response'
+              ),
+              copyToClipboard: t(
+                'agent_copy_to_clipboard',
+                'Copy to clipboard'
+              ),
+              thumbsUp: t('agent_thumbs_up', 'Thumbs up'),
+              thumbsDown: t('agent_thumbs_down', 'Thumbs down'),
+              copied: t('agent_copied', 'Copied!'),
             }}
             UserMessage={Message}
             Input={NewInput}

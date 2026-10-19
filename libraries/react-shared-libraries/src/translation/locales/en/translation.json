@@ -617,7 +617,6 @@
   "total_forks": "Total Forks",
   "continue_with": "Continue With",
   "email_address": "Email Address",
-  "label_company": "Company",
   "email_already_exists": "Email already exists",
   "google": "Google",
   "apple": "Apple",
@@ -658,7 +657,6 @@
   "add_provider_title": "Add Provider",
   "profile_updated": "Profile updated",
   "sets": "Sets",
-  "email_address": "Email Address",
   "invitation_link_sent": "Invitation link sent",
   "could_not_send_invitation": "Could not send the invitation",
   "send_invitation_link": "Send Invitation Link",
@@ -885,5 +883,16 @@
   "hubspot_installed_description": "Connect the channels you want to post to here in Postiz. Then, in HubSpot, open Agent Hub > Agent Builder, add a tool, pick Postiz MCP under MCP Servers and click Connect and add.",
   "timezone": "Timezone",
   "automatic_timezone": "Automatic ({{timezone}})",
-  "could_not_save_timezone": "Could not save the timezone"
+  "could_not_save_timezone": "Could not save the timezone",
+  "agent": "Agent",
+  "agent_placeholder": "Type a message...",
+  "agent_error": "❌ An error occurred. Please try again.",
+  "agent_stop_generating": "Stop generating",
+  "agent_regenerate_response": "Regenerate response",
+  "agent_copy_to_clipboard": "Copy to clipboard",
+  "agent_thumbs_up": "Thumbs up",
+  "agent_thumbs_down": "Thumbs down",
+  "agent_copied": "Copied!",
+  "ai_image": "AI Image",
+  "ai_video": "AI Video"
 }
