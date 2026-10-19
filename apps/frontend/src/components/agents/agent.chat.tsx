@@ -68,7 +68,7 @@ export const AgentChat: FC = () => {
             '--copilot-kit-background-color': 'var(--new-bg-color)',
           } as CopilotKitCSSProperties
         }
-        className="trz agent bg-newBgColorInner flex flex-col gap-[15px] transition-all flex-1 items-center relative"
+        className="trz agent bg-newBgColorInner flex flex-col gap-[15px] transition-all flex-1 min-w-0 w-full items-center relative"
       >
         <div className="absolute left-0 w-full h-full pb-[20px]">
           <CopilotChat
