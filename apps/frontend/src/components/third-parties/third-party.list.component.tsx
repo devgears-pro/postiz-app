@@ -81,7 +81,11 @@ export const ApiModal: FC<{
           onSubmit={methods.handleSubmit(submit)}
         >
           <div className="pt-[10px]">
-            <Input label="API Key" name="api" />
+            <Input
+              label="API Key"
+              name="api"
+              translationKey="label_api_key"
+            />
           </div>
           <div>
             <Button loading={loading} type="submit">

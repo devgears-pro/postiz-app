@@ -1191,5 +1191,11 @@
   "video_tag_unsupported": "Your browser does not support the video tag.",
   "please_fill_required_fields": "Please fill all required fields",
   "video_generation_failed": "Video generation failed",
-  "video_generation_timeout": "Video generation failed or timed out — if it completes, it will appear in your media library"
+  "video_generation_timeout": "Video generation failed or timed out — if it completes, it will appear in your media library",
+  "label_set_name": "Set Name",
+  "write_your_signature": "Write your signature...",
+  "no_integrations_yet": "No Integrations Yet",
+  "my_application": "My Application",
+  "describe_what_app_does": "Describe what your app does",
+  "add_signature": "Add Signature"
 }
