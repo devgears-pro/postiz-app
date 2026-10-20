@@ -11,14 +11,12 @@ import { useUser } from '@gitroom/frontend/components/layout/user.context';
 import {
   browserTimezone,
   isTimezone,
+  normalizeTimezone,
 } from '@gitroom/frontend/components/layout/set.timezone';
 const dateMetrics = [
   { label: 'am_pm', fallback: 'AM:PM', value: 'US' },
   { label: 'hours_24', fallback: '24 hours', value: 'GLOBAL' },
 ];
-
-const normalizeTimezone = (timezone?: string | null) =>
-  timezone === 'Europe/Kiev' ? 'Europe/Kyiv' : timezone;
 
 const timezoneOptions = timezones.filter((zone) => isTimezone(zone.tzCode));
 

@@ -267,8 +267,11 @@ const zonedPlugin: PluginFunc = (option, dayjsClass) => {
 };
 dayjs.extend(zonedPlugin);
 
+export const normalizeTimezone = (timezone?: string | null) =>
+  timezone === 'Europe/Kiev' ? 'Europe/Kyiv' : timezone;
+
 export const browserTimezone = () =>
-  Intl.DateTimeFormat().resolvedOptions().timeZone;
+  normalizeTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) || '';
 
 export const isTimezone = (timezone: string) => {
   try {
@@ -282,9 +285,10 @@ export const isTimezone = (timezone: string) => {
 // null is the browser's timezone, where plain dayjs is already right
 let userTimezone: string | null = null;
 const applyTimezone = (timezone?: string | null) => {
+  const normalized = normalizeTimezone(timezone);
   userTimezone =
-    timezone && timezone !== browserTimezone() && isTimezone(timezone)
-      ? timezone
+    normalized && normalized !== browserTimezone() && isTimezone(normalized)
+      ? normalized
       : null;
 };
 
@@ -300,10 +304,11 @@ if (typeof window !== 'undefined') {
 }
 
 export const setUserTimezone = (timezone?: string | null) => {
-  applyTimezone(timezone);
+  const normalized = normalizeTimezone(timezone);
+  applyTimezone(normalized);
   try {
-    if (timezone) {
-      localStorage.setItem(STORAGE_KEY, timezone);
+    if (normalized) {
+      localStorage.setItem(STORAGE_KEY, normalized);
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
