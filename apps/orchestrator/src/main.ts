@@ -8,7 +8,10 @@ dayjs.extend(utc);
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@gitroom/orchestrator/app.module';
 import * as dns from 'node:dns';
+import { Runtime } from '@temporalio/worker';
 dns.setDefaultResultOrder('ipv4first');
+
+Runtime.install({ shutdownSignals: [], workerHeartbeatInterval: 0 });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
