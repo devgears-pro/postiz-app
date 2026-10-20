@@ -1197,5 +1197,18 @@
   "no_integrations_yet": "No Integrations Yet",
   "my_application": "My Application",
   "describe_what_app_does": "Describe what your app does",
-  "add_signature": "Add Signature"
+  "add_signature": "Add Signature",
+  "save_as_set": "Save as Set",
+  "set_saved": "Set saved successfully",
+  "set_save_failed": "Failed to save set",
+  "set_deleted": "Set deleted successfully",
+  "confirm_delete_set": "Are you sure you want to delete {{name}}?",
+  "sets_description": "Manage your content sets for easy reuse across posts.",
+  "add_set": "Add a set",
+  "enter_set_name": "Enter a name for this set",
+  "add_api_key_for": "Add API key for {{title}}",
+  "cli_step_install": "Install the CLI",
+  "cli_step_run": "Run: postiz auth:login",
+  "cli_step_api_key": "Set your API key as an environment variable",
+  "cli_step_skill": "Install the Postiz skill for your AI agent"
 }

@@ -663,7 +663,7 @@
   "copy_link": "Копіювати посилання",
   "are_you_sure_remove_team_member": "Ви впевнені, що хочете прибрати цього учасника команди?",
   "admin": "Адміністратор",
-  "super_admin": "Суперадміністратор",
+  "super_admin": "Суперадмін",
   "update_webhook": "Оновити вебхук",
   "add_webhook": "Додати вебхук",
   "webhook_updated_successfully": "Вебхук оновлено",
@@ -1197,5 +1197,18 @@
   "no_integrations_yet": "Інтеграцій ще немає",
   "my_application": "Мій застосунок",
   "describe_what_app_does": "Опишіть, що робить ваш застосунок",
-  "add_signature": "Додати підпис"
+  "add_signature": "Додати підпис",
+  "save_as_set": "Зберегти як набір",
+  "set_saved": "Набір збережено",
+  "set_save_failed": "Не вдалося зберегти набір",
+  "set_deleted": "Набір видалено",
+  "confirm_delete_set": "Видалити набір «{{name}}»?",
+  "sets_description": "Керуйте наборами контенту, щоб повторно використовувати їх у дописах.",
+  "add_set": "Додати набір",
+  "enter_set_name": "Введіть назву набору",
+  "add_api_key_for": "Додати API-ключ для {{title}}",
+  "cli_step_install": "Встановіть CLI",
+  "cli_step_run": "Запустіть: postiz auth:login",
+  "cli_step_api_key": "Задайте API-ключ як змінну середовища",
+  "cli_step_skill": "Встановіть скіл Postiz для вашого AI-агента"
 }

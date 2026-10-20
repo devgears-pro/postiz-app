@@ -615,6 +615,27 @@ const CliSection = ({ apiKey }: { apiKey: string }) => {
           code: step.code.replace('{API_KEY}', apiKey),
         }));
 
+  const stepLabel = (label: string) => {
+    switch (label) {
+      case 'Install the CLI':
+        return t('cli_step_install', 'Install the CLI');
+      case 'Run: postiz auth:login':
+        return t('cli_step_run', 'Run: postiz auth:login');
+      case 'Set your API key as an environment variable':
+        return t(
+          'cli_step_api_key',
+          'Set your API key as an environment variable'
+        );
+      case 'Install the Postiz skill for your AI agent':
+        return t(
+          'cli_step_skill',
+          'Install the Postiz skill for your AI agent'
+        );
+      default:
+        return label;
+    }
+  };
+
   const displaySteps =
     mode === 'ci' && !revealed
       ? steps.map((step) => ({
@@ -674,7 +695,7 @@ const CliSection = ({ apiKey }: { apiKey: string }) => {
         {displaySteps.map((step, i) => (
           <div key={i} className="flex flex-col gap-[6px]">
             <div className="text-[13px] font-[600] text-customColor18">
-              {i + 1}. {step.label}
+              {i + 1}. {stepLabel(step.label)}
             </div>
             <pre className="bg-newBgColorInner border border-newBorder rounded-[8px] p-[16px] text-[13px] whitespace-pre-wrap break-all overflow-x-auto leading-[1.6]">
               {step.code}
