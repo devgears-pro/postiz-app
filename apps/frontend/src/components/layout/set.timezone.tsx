@@ -291,14 +291,6 @@ const applyTimezone = (timezone?: string | null) => {
 // the timezone dates are shown in, for Intl formatting outside of dayjs
 export const getTimezone = () => userTimezone || browserTimezone();
 
-// pages outside the logged-in layout (connecting a channel, the extension)
-// don't load the user, they start from the timezone the app loaded last
-if (typeof window !== 'undefined') {
-  try {
-    applyTimezone(localStorage.getItem(STORAGE_KEY));
-  } catch (err) {}
-}
-
 export const setUserTimezone = (timezone?: string | null) => {
   applyTimezone(timezone);
   try {
