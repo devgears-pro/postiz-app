@@ -41,7 +41,7 @@ const SaveSetModal: FC<{
           value={name}
           disableForm={true}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Enter a name for this set"
+          placeholder={t('enter_set_name', 'Enter a name for this set')}
           autoFocus
         />
       </div>
@@ -62,6 +62,7 @@ export const Sets: FC = () => {
   const user = useUser();
   const modal = useModals();
   const toaster = useToaster();
+  const t = useT();
 
   const load = useCallback(async (path: string) => {
     return (await (await fetch(path)).json()).integrations;
@@ -111,7 +112,7 @@ export const Sets: FC = () => {
             {...(params?.id ? { set: JSON.parse(params.content) } : {})}
             addEditSets={(data) => {
               modal.openModal({
-                title: 'Save as Set',
+                title: t('save_as_set', 'Save as Set'),
                 children: (
                   <SaveSetModal
                     initialValue={params?.name || ''}
@@ -128,9 +129,15 @@ export const Sets: FC = () => {
                         });
                         modal.closeAll();
                         mutate();
-                        toaster.show('Set saved successfully', 'success');
+                        toaster.show(
+                          t('set_saved', 'Set saved successfully'),
+                          'success'
+                        );
                       } catch (error) {
-                        toaster.show('Failed to save set', 'warning');
+                        toaster.show(
+                          t('set_save_failed', 'Failed to save set'),
+                          'warning'
+                        );
                       }
                     }}
                     onCancel={() => modal.closeAll()}
@@ -152,24 +159,36 @@ export const Sets: FC = () => {
 
   const deleteSet = useCallback(
     (data: any) => async () => {
-      if (await deleteDialog(`Are you sure you want to delete ${data.name}?`)) {
+      if (
+        await deleteDialog(
+          t('confirm_delete_set', 'Are you sure you want to delete {{name}}?', {
+            name: data.name,
+          })
+        )
+      ) {
         await fetch(`/sets/${data.id}`, {
           method: 'DELETE',
         });
         mutate();
-        toaster.show('Set deleted successfully', 'success');
+        toaster.show(
+          t('set_deleted', 'Set deleted successfully'),
+          'success'
+        );
       }
     },
-    []
+    [t]
   );
-
-  const t = useT();
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-[20px]">Sets ({data?.length || 0})</h3>
+      <h3 className="text-[20px]">
+        {t('sets', 'Sets')} ({data?.length || 0})
+      </h3>
       <div className="text-customColor18 mt-[4px]">
-        Manage your content sets for easy reuse across posts.
+        {t(
+          'sets_description',
+          'Manage your content sets for easy reuse across posts.'
+        )}
       </div>
       <div className="my-[16px] mt-[16px] bg-sixth border-fifth items-center border rounded-[4px] p-[24px] flex gap-[24px]">
         <div className="flex flex-col w-full">
@@ -202,7 +221,7 @@ export const Sets: FC = () => {
               onClick={addSet()}
               className={clsx((data?.length || 0) > 0 && 'my-[16px]')}
             >
-              Add a set
+              {t('add_set', 'Add a set')}
             </Button>
           </div>
         </div>

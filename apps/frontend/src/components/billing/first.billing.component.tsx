@@ -152,7 +152,9 @@ export const FirstBillingComponent = () => {
                 alt="YouTube"
               />
             </div>
-            <div>See the power of Postiz (click here)</div>
+            <div>
+              {t('see_postiz_power', 'See the power of Postiz (click here)')}
+            </div>
           </div>
         </div>
 
