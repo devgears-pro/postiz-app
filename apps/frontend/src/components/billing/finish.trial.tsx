@@ -4,10 +4,12 @@ import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { timer } from '@gitroom/helpers/utils/timer';
 import { Button } from '@gitroom/react/form/button';
+import { useT } from '@gitroom/react/translation/get.transation.service.client';
 
 export const FinishTrial: FC<{ close: () => void }> = (props) => {
   const [finished, setFinished] = useState(false);
   const fetch = useFetch();
+  const t = useT();
 
   const finishSubscription = useCallback(async () => {
     await fetch('/billing/finish-trial', {
@@ -66,11 +68,18 @@ export const FinishTrial: FC<{ close: () => void }> = (props) => {
                 {finished && (
                   <div className="flex flex-col">
                     <div>
-                      You trial has been successfully finished and you have been charged.
+                      {t(
+                        'trial_finished_charged',
+                        'You trial has been successfully finished and you have been charged.'
+                      )}
                     </div>
                     <div className="flex gap-[10px] mt-[20px]">
-                      <Button className="flex-1" onClick={() => window.close()}>Close window</Button>
-                      <Button className="flex-1" onClick={() => props.close()}>Close dialog</Button>
+                      <Button className="flex-1" onClick={() => window.close()}>
+                        {t('close_window', 'Close window')}
+                      </Button>
+                      <Button className="flex-1" onClick={() => props.close()}>
+                        {t('close_dialog', 'Close dialog')}
+                      </Button>
                     </div>
                   </div>
                 )}
