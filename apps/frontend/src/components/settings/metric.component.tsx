@@ -20,35 +20,7 @@ const dateMetrics = [
 const normalizeTimezone = (timezone?: string | null) =>
   timezone === 'Europe/Kiev' ? 'Europe/Kyiv' : timezone;
 
-// the list has names that aren't IANA timezones (Europe/Zaporizhzhia)
-const seenTimezones = new Set<string>();
-const timezoneOptions = timezones
-  .filter((zone) => isTimezone(zone.tzCode))
-  .map((zone) =>
-    zone.tzCode === 'Europe/Kiev'
-      ? {
-          ...zone,
-          tzCode: 'Europe/Kyiv',
-          label: zone.label.replace('Europe/Kiev', 'Europe/Kyiv'),
-        }
-      : zone
-  )
-  .filter((zone) => {
-    if (seenTimezones.has(zone.tzCode)) {
-      return false;
-    }
-    seenTimezones.add(zone.tzCode);
-    return true;
-  });
-
-if (!timezoneOptions.some((zone) => zone.tzCode === 'Europe/Kyiv')) {
-  timezoneOptions.push({
-    tzCode: 'Europe/Kyiv',
-    label: 'Europe/Kyiv (GMT+02:00)',
-    name: 'Kyiv',
-    utc: 'GMT+02:00',
-  });
-}
+const timezoneOptions = timezones.filter((zone) => isTimezone(zone.tzCode));
 
 const MetricComponent = () => {
   const t = useT();
