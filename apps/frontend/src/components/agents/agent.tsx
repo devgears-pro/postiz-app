@@ -43,7 +43,7 @@ export const MediaPortal: FC<{
   const t = useT();
   if (!waitForClass) return null;
   return (
-    <div className="pl-[14px] pr-[24px] whitespace-nowrap editor rm-bg">
+    <div className="pl-[14px] pr-[24px] whitespace-nowrap editor rm-bg max-w-full overflow-x-auto">
       <MultiMediaComponent
         allData={[{ content: value }]}
         text={value}
@@ -207,7 +207,7 @@ export const Agent: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <PropertiesContext.Provider value={{ properties }}>
       <AgentList onChange={setProperties} />
-      <div className="bg-newBgColorInner flex flex-1 mobile:order-3 mobile:min-h-[500px]">
+      <div className="bg-newBgColorInner flex flex-1 min-w-0 mobile:order-3 mobile:min-h-[500px]">
         {children}
       </div>
       <Threads />

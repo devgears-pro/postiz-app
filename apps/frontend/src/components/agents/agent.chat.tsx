@@ -68,7 +68,7 @@ export const AgentChat: FC = () => {
             '--copilot-kit-background-color': 'var(--new-bg-color)',
           } as CopilotKitCSSProperties
         }
-        className="trz agent bg-newBgColorInner flex flex-col gap-[15px] transition-all flex-1 items-center relative"
+        className="trz agent bg-newBgColorInner flex flex-col gap-[15px] transition-all flex-1 min-w-0 w-full items-center relative"
       >
         <div className="absolute left-0 w-full h-full pb-[20px]">
           <CopilotChat
@@ -85,6 +85,23 @@ You can see your previous conversations from the right menu.
 
 You can also use me as an MCP Server, check Settings >> Agents / Dev
 `),
+              placeholder: t('agent_placeholder', 'Type a message...'),
+              error: t(
+                'agent_error',
+                '❌ An error occurred. Please try again.'
+              ),
+              stopGenerating: t('agent_stop_generating', 'Stop generating'),
+              regenerateResponse: t(
+                'agent_regenerate_response',
+                'Regenerate response'
+              ),
+              copyToClipboard: t(
+                'agent_copy_to_clipboard',
+                'Copy to clipboard'
+              ),
+              thumbsUp: t('agent_thumbs_up', 'Thumbs up'),
+              thumbsDown: t('agent_thumbs_down', 'Thumbs down'),
+              copied: t('agent_copied', 'Copied!'),
             }}
             UserMessage={Message}
             Input={NewInput}
