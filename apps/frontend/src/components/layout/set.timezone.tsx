@@ -287,9 +287,7 @@ let userTimezone: string | null = null;
 const applyTimezone = (timezone?: string | null) => {
   const normalized = normalizeTimezone(timezone);
   userTimezone =
-    normalized && normalized !== browserTimezone() && isTimezone(normalized)
-      ? normalized
-      : null;
+    normalized && isTimezone(normalized) ? normalized : null;
 };
 
 // the timezone dates are shown in, for Intl formatting outside of dayjs
