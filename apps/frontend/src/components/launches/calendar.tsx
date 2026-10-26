@@ -28,6 +28,7 @@ import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import 'dayjs/locale/ar';
 import 'dayjs/locale/tr';
+import 'dayjs/locale/uk';
 import 'dayjs/locale/vi';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { useModals } from '@gitroom/frontend/components/layout/new-modal';

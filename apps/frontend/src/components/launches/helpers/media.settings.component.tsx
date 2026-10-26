@@ -9,6 +9,7 @@ import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { useModals } from '@gitroom/frontend/components/layout/new-modal';
 import { MediaBox } from '@gitroom/frontend/components/media/media.component';
+import { useT } from '@gitroom/react/translation/get.transation.service.client';
 const postUrlEmitter = new EventEmitter();
 
 export const MediaSettingsLayout = () => {
@@ -311,6 +312,7 @@ export const MediaComponentInner: FC<{
     | undefined;
 }> = (props) => {
   const { onClose, onSelect, media } = props;
+  const t = useT();
   const setActivateExitButton = useLaunchStore((e) => e.setActivateExitButton);
   const newFetch = useFetch();
   const modals = useModals();
@@ -386,7 +388,9 @@ export const MediaComponentInner: FC<{
             {!isEditingThumbnail ? (
               <div className="flex flex-col">
                 <div className="flex flex-col space-y-2">
-                  <span className="text-sm text-textColor">Thumbnail:</span>
+                  <span className="text-sm text-textColor">
+                    {t('current_thumbnail', 'Thumbnail:')}
+                  </span>
                   {(newThumbnail || thumbnail) && (
                     <img
                       src={newThumbnail || thumbnail}
@@ -409,7 +413,7 @@ export const MediaComponentInner: FC<{
                     disabled={loading}
                     onClick={() =>
                       modals.openModal({
-                        title: 'Media Library',
+                        title: t('media_library', 'Media Library'),
                         askClose: false,
                         closeOnEscape: true,
                         fullScreen: true,
@@ -444,7 +448,7 @@ export const MediaComponentInner: FC<{
                       }}
                       className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-opacity-80 transition-all flex-1 border border-red-700 whitespace-nowrap"
                     >
-                      Clear
+                      {t('clear_thumbnail', 'Clear')}
                     </button>
                   )}
                 </div>
