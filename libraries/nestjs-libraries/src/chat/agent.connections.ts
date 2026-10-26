@@ -6,7 +6,8 @@ import type {
   ResolvedMcpServer,
 } from '@gitroom/helpers/agent/agent.config.schema';
 import { getSsrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
-import type { AgentConfigService, ResolvedAgentBundle } from '@gitroom/nestjs-libraries/chat/agent.config.service';
+import { AgentConfigService } from '@gitroom/nestjs-libraries/chat/agent.config.service';
+import type { ResolvedAgentBundle } from '@gitroom/nestjs-libraries/chat/agent.config.service';
 
 export type AgentModel = ReturnType<ReturnType<typeof createOpenAI>['chat']>;
 
