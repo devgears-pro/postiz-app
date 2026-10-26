@@ -11,7 +11,6 @@ const OTHER_KEY = Buffer.alloc(32, 9);
 const SECRETS: AgentSecrets = {
   providerApiKey: 'sk-org-provider',
   mcpBearerTokens: { 'shared-crm': 'crm-token' },
-  langfuse: { publicKey: 'pk-lf', secretKey: 'sk-lf' },
 };
 
 describe('agent secrets', () => {

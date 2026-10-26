@@ -1219,7 +1219,6 @@
   "cli_step_run": "Запустіть: postiz auth:login",
   "cli_step_api_key": "Задайте API-ключ як змінну середовища",
   "cli_step_skill": "Встановіть скіл Postiz для вашого AI-агента",
-  "agent_settings": "Налаштування",
   "agent_settings_title": "Налаштування агента",
   "agent_settings_scope": "Ці налаштування належать організації. Порожні поля успадковують спільні дефолти розгортання.",
   "agent_settings_admin_only": "Змінювати налаштування агента можуть лише адміністратори організації.",
@@ -1266,10 +1265,5 @@
   "agent_mcp_id": "ID сервера (малими літерами, дефіси)",
   "agent_mcp_ok": "Знайдені інструменти:",
   "agent_mcp_failed": "MCP-сервер не відповів.",
-  "agent_langfuse_title": "Трасування Langfuse",
-  "agent_langfuse_system": "Дефолт розгортання",
-  "agent_langfuse_public": "Публічний ключ Langfuse",
-  "agent_langfuse_secret": "Секретний ключ Langfuse",
-  "agent_langfuse_capture": "Зберігати текст повідомлень у трасах",
   "agent_secret_keep": "••••••• збережено, залишіть порожнім, щоб не змінювати"
 }

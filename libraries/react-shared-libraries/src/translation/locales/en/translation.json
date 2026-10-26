@@ -896,7 +896,6 @@
   "media_settings_section_description": "Click a media item to set its alt text, or its thumbnail if it is a video.",
   "media_settings_section_tooltip": "Thumbnails apply to videos in the main post and are sent to every channel that supports them. YouTube may ignore them on videos it treats as Shorts (vertical, up to 3 minutes) without failing the publish, and requires a phone-verified channel for custom thumbnails. If YouTube rejects the thumbnail the video is still published, and Postiz cannot check eligibility in advance.",
   "youtube_thumbnail_overrides_media": "This post has a YouTube-specific thumbnail, which overrides the thumbnail set in the media settings.",
-  "agent_settings": "Settings",
   "agent_settings_title": "Agent settings",
   "agent_settings_scope": "These settings belong to this organization. Empty fields inherit the shared deployment defaults.",
   "agent_settings_admin_only": "Only organization administrators can change agent settings.",
@@ -943,10 +942,5 @@
   "agent_mcp_id": "Server id (lowercase, hyphens)",
   "agent_mcp_ok": "Tools found:",
   "agent_mcp_failed": "The MCP server did not answer.",
-  "agent_langfuse_title": "Langfuse tracing",
-  "agent_langfuse_system": "Deployment default",
-  "agent_langfuse_public": "Langfuse public key",
-  "agent_langfuse_secret": "Langfuse secret key",
-  "agent_langfuse_capture": "Store message text in traces",
   "agent_secret_keep": "••••••• saved, leave empty to keep"
 }

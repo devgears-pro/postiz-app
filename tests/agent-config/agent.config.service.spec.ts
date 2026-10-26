@@ -110,7 +110,7 @@ describe('AgentConfigService', () => {
       source: 'system',
       configured: true,
     });
-    expect(view.credentials.langfuse.source).toBe('system');
+    expect((view.credentials as any).langfuse).toBeUndefined();
   });
 
   it('creates the first revision and keeps secrets out of the view', async () => {
@@ -124,7 +124,7 @@ describe('AgentConfigService', () => {
           systemPrompt: 'Own rules',
           provider: { baseUrl: 'https://own.example.test/v1' },
         },
-        { providerApiKey: 'sk-own', langfuse: null }
+        { providerApiKey: 'sk-own' }
       )
     );
 
@@ -135,7 +135,6 @@ describe('AgentConfigService', () => {
     expect(rows.get('org-1').secretSummary).toEqual({
       providerApiKey: true,
       mcp: [],
-      langfuse: false,
     });
     expect(view.credentials.provider).toEqual({
       source: 'organization',
@@ -206,17 +205,6 @@ describe('AgentConfigService', () => {
     });
   });
 
-  it('requires both Langfuse keys for a custom host', async () => {
-    const { service } = buildService();
-
-    await expect(
-      service.save(
-        'org-1',
-        'user-1',
-        write({ langfuse: { baseUrl: 'https://langfuse.example.test' } })
-      )
-    ).rejects.toBeInstanceOf(BadRequestException);
-  });
 
   it('resets overrides and credentials without deleting the row', async () => {
     const { service, rows } = buildService();
@@ -241,7 +229,6 @@ describe('AgentConfigService', () => {
     expect(rows.get('org-1').secretSummary).toEqual({
       providerApiKey: false,
       mcp: [],
-      langfuse: false,
     });
   });
 
