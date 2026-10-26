@@ -15,6 +15,11 @@ import {
   setProvider,
   toWriteRequest,
 } from '@gitroom/frontend/components/agents/agent.settings.state';
+import {
+  agentSettingsSectionKey,
+  agentSettingsSectionTitle,
+  type AgentSettingsSection,
+} from '@gitroom/frontend/components/agents/agent.settings.sections';
 import { AgentSkillsSettings } from '@gitroom/frontend/components/agents/agent.skills.settings';
 import { AgentMcpSettings } from '@gitroom/frontend/components/agents/agent.mcp.settings';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
@@ -70,16 +75,6 @@ export const AgentSettings: FC = () => {
     () => new Set(overrides.builtinTools ?? view?.effective.builtinTools ?? []),
     [overrides.builtinTools, view?.effective.builtinTools]
   );
-
-  const allowedLangfuse = view?.capabilities.langfuseBaseUrls ?? [];
-  const langfuseOverrides = overrides.langfuse ?? {};
-  const langfuseEnabled =
-    langfuseOverrides.enabled ??
-    (overrides.langfuse !== undefined
-      ? true
-      : view?.effective.langfuse.enabled ?? false);
-  const langfuseBaseUrl =
-    langfuseOverrides.baseUrl ?? view?.effective.langfuse.baseUrl ?? '';
 
   if (!user || !['ADMIN', 'SUPERADMIN'].includes(user.role)) {
     return (
@@ -213,6 +208,9 @@ export const AgentSettings: FC = () => {
     );
   };
 
+  const sectionTitle = (section: AgentSettingsSection) =>
+    t(agentSettingsSectionKey(section), agentSettingsSectionTitle(section));
+
   const dirty = isDirty(view, overrides, secrets) || Object.keys(mcpTokens).length > 0;
 
   return (
@@ -281,8 +279,8 @@ export const AgentSettings: FC = () => {
       </section>
 
       <section className="flex flex-col gap-[8px]">
-        <h3 className="text-[18px] font-[500]">
-          {t('agent_model_title', 'Model and provider')}
+        <h3 className="text-[18px] font-[500]" data-agent-section="model">
+          {sectionTitle('model')}
         </h3>
         <label className="text-[14px]">{t('agent_provider_url', 'Provider base URL')}</label>
         <input
@@ -375,8 +373,8 @@ export const AgentSettings: FC = () => {
       </section>
 
       <section className="flex flex-col gap-[8px]">
-        <h3 className="text-[18px] font-[500]">
-          {t('agent_tools_title', 'Built-in tools')}
+        <h3 className="text-[18px] font-[500]" data-agent-section="tools">
+          {sectionTitle('tools')}
         </h3>
         <div className="flex flex-wrap gap-[12px]">
           {view.capabilities.builtinTools.map((tool) => (
@@ -435,114 +433,6 @@ export const AgentSettings: FC = () => {
         }}
         onTest={testMcp}
       />
-
-      <section className="flex flex-col gap-[8px]">
-        <div className="flex items-center gap-[8px] flex-wrap">
-          <h3 className="text-[18px] font-[500] flex-1">
-            {t('agent_langfuse_title', 'Langfuse tracing')}
-          </h3>
-          <label className="flex items-center gap-[6px] text-[14px]">
-            <input
-              type="checkbox"
-              checked={langfuseEnabled}
-              onChange={(event) =>
-                setOverrides({
-                  ...overrides,
-                  langfuse: {
-                    ...(overrides.langfuse ?? {}),
-                    enabled: event.target.checked,
-                  },
-                })
-              }
-            />
-            {t('agent_enabled', 'Enabled')}
-          </label>
-          <span className="text-[12px] opacity-60">
-            {t('agent_source', 'source')}: {view.credentials.langfuse.source}
-          </span>
-        </div>
-
-        {langfuseEnabled && allowedLangfuse.length > 0 && (
-          <select
-            className={inputClass}
-            value={langfuseOverrides.baseUrl ?? ''}
-            onChange={(event) =>
-              setOverrides({
-                ...overrides,
-                langfuse: {
-                  ...(overrides.langfuse ?? {}),
-                  ...(event.target.value
-                    ? { baseUrl: event.target.value }
-                    : { baseUrl: undefined }),
-                },
-              })
-            }
-          >
-            <option value="">
-              {t('agent_langfuse_system', 'Deployment default')}
-            </option>
-            {allowedLangfuse.map((url) => (
-              <option key={url} value={url}>
-                {url}
-              </option>
-            ))}
-          </select>
-        )}
-
-        {langfuseOverrides.baseUrl && (
-          <>
-            <input
-              className={inputClass}
-              value={secrets.langfuse?.publicKey ?? ''}
-              placeholder={t('agent_langfuse_public', 'Langfuse public key')}
-              onChange={(event) =>
-                setSecrets({
-                  ...secrets,
-                  langfuse: {
-                    publicKey: event.target.value,
-                    secretKey: secrets.langfuse?.secretKey ?? '',
-                  },
-                })
-              }
-            />
-            <input
-              type="password"
-              className={inputClass}
-              value={secrets.langfuse?.secretKey ?? ''}
-              placeholder={t('agent_langfuse_secret', 'Langfuse secret key')}
-              onChange={(event) =>
-                setSecrets({
-                  ...secrets,
-                  langfuse: {
-                    publicKey: secrets.langfuse?.publicKey ?? '',
-                    secretKey: event.target.value,
-                  },
-                })
-              }
-            />
-          </>
-        )}
-
-        <label className="flex items-center gap-[6px] text-[14px]">
-          <input
-            type="checkbox"
-            checked={
-              langfuseOverrides.captureContent ??
-              view.effective.langfuse.captureContent
-            }
-            onChange={(event) =>
-              setOverrides({
-                ...overrides,
-                langfuse: {
-                  ...(overrides.langfuse ?? {}),
-                  captureContent: event.target.checked,
-                },
-              })
-            }
-          />
-          {t('agent_langfuse_capture', 'Store message text in traces')}
-        </label>
-      </section>
 
       <div className="flex items-center gap-[12px] sticky bottom-0 bg-newBgColorInner py-[12px]">
         <button

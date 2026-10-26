@@ -10,23 +10,12 @@ const KEY_BYTES = 32;
 export type AgentSecrets = {
   providerApiKey?: string;
   mcpBearerTokens?: Record<string, string>;
-  langfuse?: {
-    publicKey: string;
-    secretKey: string;
-  };
 };
 
 const agentSecretsSchema = z
   .object({
     providerApiKey: z.string().min(1).optional(),
     mcpBearerTokens: z.record(z.string(), z.string().min(1)).optional(),
-    langfuse: z
-      .object({
-        publicKey: z.string().min(1),
-        secretKey: z.string().min(1),
-      })
-      .strict()
-      .optional(),
   })
   .strict();
 
@@ -35,13 +24,11 @@ const associatedData = (organizationId: string) =>
 
 export const isEmptyAgentSecrets = (secrets: AgentSecrets) =>
   !secrets.providerApiKey &&
-  !secrets.langfuse &&
   Object.keys(secrets.mcpBearerTokens ?? {}).length === 0;
 
 export type AgentSecretSummary = {
   providerApiKey: boolean;
   mcp: string[];
-  langfuse: boolean;
 };
 
 export const summarizeAgentSecrets = (
@@ -49,7 +36,6 @@ export const summarizeAgentSecrets = (
 ): AgentSecretSummary => ({
   providerApiKey: Boolean(secrets.providerApiKey),
   mcp: Object.keys(secrets.mcpBearerTokens ?? {}).sort(),
-  langfuse: Boolean(secrets.langfuse),
 });
 
 export function encryptAgentSecrets(

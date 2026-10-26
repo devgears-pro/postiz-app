@@ -205,23 +205,6 @@ describe('resolveAgentConfig', () => {
     ]);
   });
 
-  it('disables Langfuse when the organization opts out', () => {
-    const config = resolve(validOverrides({ langfuse: { enabled: false } }));
-
-    expect(config.langfuse).toEqual(
-      expect.objectContaining({ enabled: false, credential: 'none' })
-    );
-  });
-
-  it('requires organization credentials for an organization Langfuse host', () => {
-    const config = resolve(
-      validOverrides({
-        langfuse: { baseUrl: 'https://langfuse.example.test' },
-      })
-    );
-
-    expect(config.langfuse.credential).toBe('organization');
-  });
 });
 
 describe('agent config validation', () => {
@@ -286,13 +269,12 @@ describe('agent config validation', () => {
     expect(issues.map((issue) => issue.path)).toContain('builtinTools');
   });
 
-  it('rejects a Langfuse host outside the deployment allowlist', () => {
-    const overrides = agentConfigOverridesSchema.parse({
-      langfuse: { baseUrl: 'https://collector.example.test' },
+  it('rejects any organization Langfuse override', () => {
+    const parsed = agentConfigOverridesSchema.safeParse({
+      langfuse: { enabled: false },
     });
-    const issues = validateOverrides(DEFAULTS, overrides);
 
-    expect(issues.map((issue) => issue.path)).toContain('langfuse.baseUrl');
+    expect(parsed.success).toBe(false);
   });
 
   it('rejects a non-https organization provider', () => {
@@ -313,7 +295,6 @@ describe('toAgentConfigView', () => {
       {
         provider: { source: 'system', configured: true },
         mcp: { 'shared-crm': { source: 'system', configured: true } },
-        langfuse: { source: 'system', configured: true },
       }
     );
 
@@ -336,10 +317,12 @@ describe('toAgentConfigView', () => {
     const view = toAgentConfigView(DEFAULTS, validOverrides(), 0, {
       provider: { source: 'system', configured: true },
       mcp: {},
-      langfuse: { source: 'none', configured: false },
     });
 
     expect(view.defaults.prompt).toBe('built-in prompt');
+    expect((view.defaults as any).langfuse).toBeUndefined();
+    expect((view.effective as any).langfuse).toBeUndefined();
+    expect((view.credentials as any).langfuse).toBeUndefined();
     expect(view.defaults.skills.map((skill) => skill.name)).toEqual([
       'marketing',
       'support',
