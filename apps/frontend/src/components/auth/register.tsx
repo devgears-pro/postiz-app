@@ -98,6 +98,7 @@ export function RegisterAfter({
     neynarClientId,
     appleClientId,
     billingEnabled,
+    googleClientId,
   } = useVariables();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -107,6 +108,14 @@ export function RegisterAfter({
   const isAfterProvider = useMemo(() => {
     return !!token && !!provider;
   }, [token, provider]);
+  const socialProviders =
+    !isAfterProvider &&
+    (!isGeneral ||
+      !!googleClientId ||
+      genericOauth ||
+      !!appleClientId ||
+      !!neynarClientId ||
+      billingEnabled);
   const resolver = useMemo(() => {
     return classValidatorResolver(CreateOrgUserDto);
   }, []);
@@ -162,26 +171,28 @@ export function RegisterAfter({
               {t('sign_up', 'Sign Up')}
             </h1>
           </div>
-          <div className="text-[14px] mt-[32px] mb-[12px]">
-            {t('continue_with', 'Continue With')}
-          </div>
+          {socialProviders && (
+            <div className="text-[14px] mt-[32px] mb-[12px]">
+              {t('continue_with', 'Continue With')}
+            </div>
+          )}
           <div className="flex flex-col text-[14px]">
-            {!isAfterProvider &&
+            {socialProviders &&
               (!isGeneral ? (
                 <GithubProvider />
               ) : (
                 <div className="gap-[8px] flex">
                   {genericOauth && isGeneral ? (
                     <OauthProvider />
-                  ) : (
+                  ) : !!googleClientId ? (
                     <GoogleProvider />
-                  )}
+                  ) : null}
                   {!!appleClientId && <AppleProvider />}
                   {!!neynarClientId && <FarcasterProvider />}
                   {billingEnabled && <WalletProvider />}
                 </div>
               ))}
-            {!isAfterProvider && (
+            {socialProviders && (
               <div className="h-[20px] mb-[24px] mt-[24px] relative">
                 <div className="absolute w-full h-[1px] bg-fifth top-[50%] -translate-y-[50%]" />
                 <div
@@ -191,7 +202,12 @@ export function RegisterAfter({
                 </div>
               </div>
             )}
-            <div className="flex flex-col gap-[12px]">
+            <div
+              className={clsx(
+                'flex flex-col gap-[12px]',
+                !socialProviders && 'mt-[32px]'
+              )}
+            >
               <div className="text-textColor">
                 {!isAfterProvider && (
                   <>
