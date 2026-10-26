@@ -22,6 +22,7 @@ import { Integration } from '@prisma/client';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useUser } from '@gitroom/frontend/components/layout/user.context';
 
 export const MediaPortal: FC<{
   media: { path: string; id: string }[];
@@ -220,6 +221,7 @@ const Threads: FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const t = useT();
+  const user = useUser();
   const threads = useCallback(async () => {
     return (await fetch('/copilot/list')).json();
   }, []);
@@ -261,6 +263,16 @@ const Threads: FC = () => {
             </div>
           </Link>
         </div>
+        {user && ['ADMIN', 'SUPERADMIN'].includes(user.role) && (
+          <div className="mb-[15px] mobile:mb-0 mobile:shrink-0">
+            <Link
+              href="/agents/settings"
+              className="text-btnText whitespace-nowrap flex justify-center items-center gap-[5px] px-[12px] py-[10px] rounded-md bg-btnSimple min-h-[44px]"
+            >
+              {t('agent_settings', 'Settings')}
+            </Link>
+          </div>
+        )}
         <div className="flex flex-col gap-[1px] mobile:flex-row mobile:gap-[4px]">
           {data?.threads?.map((p: any) => (
             <Link

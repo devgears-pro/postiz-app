@@ -1,0 +1,65 @@
+name: Test agent configuration
+
+on:
+  pull_request:
+    paths:
+      - 'apps/backend/src/api/routes/agent.config.controller.ts'
+      - 'apps/backend/src/services/auth/agent.config.admin.guard.ts'
+      - 'apps/backend/src/api/routes/copilot.controller.ts'
+      - 'apps/frontend/src/components/agents/**'
+      - 'apps/frontend/src/app/(app)/(site)/agents/**'
+      - 'libraries/helpers/src/agent/**'
+      - 'libraries/nestjs-libraries/src/chat/agent.*'
+      - 'libraries/nestjs-libraries/src/database/prisma/agent-config/**'
+      - 'libraries/nestjs-libraries/src/database/prisma/schema.prisma'
+      - 'tests/agent-config/**'
+      - 'jest.config.js'
+      - '.github/workflows/test-agent-config.yml'
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postiz
+          POSTGRES_PASSWORD: postiz
+          POSTGRES_DB: postiz_agent_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postiz"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postiz:postiz@localhost:5432/postiz_agent_test
+      POSTIZ_AGENT_TEST_DATABASE_URL: postgresql://postiz:postiz@localhost:5432/postiz_agent_test
+      POSTIZ_AI_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Sync the test schema
+        run: pnpm dlx prisma@6.5.0 db push --schema ./libraries/nestjs-libraries/src/database/prisma/schema.prisma
+
+      - name: Unit tests
+        run: pnpm exec jest tests/agent-config --runInBand --coverage=false
+
+      - name: Backend typecheck
+        run: pnpm exec tsc -p apps/backend/tsconfig.build.json --noEmit
+
+      - name: Frontend typecheck
+        run: pnpm exec tsc -p apps/frontend/tsconfig.json --noEmit
