@@ -6,7 +6,9 @@ import {
   formMcpServers,
   formSkills,
   isDirty,
+  promptEditorState,
   removeSkill,
+  resetPrompt,
   setPrompt,
   setProvider,
   setSkillEnabled,
@@ -143,9 +145,30 @@ describe('agent settings state', () => {
     expect(removeSkill(VIEW, {}, 'support').skills).toEqual({ support: null });
   });
 
-  it('clears the prompt override when the field becomes empty', () => {
-    expect(setPrompt({ systemPrompt: 'Own' }, '  ').systemPrompt).toBeUndefined();
+  it('keeps an empty prompt as an explicit override', () => {
+    expect(setPrompt({ systemPrompt: 'Own' }, '').systemPrompt).toBe('');
+    expect(setPrompt({}, '  ').systemPrompt).toBe('  ');
     expect(setPrompt({}, 'Own').systemPrompt).toBe('Own');
+  });
+
+  it('resets the prompt override on demand', () => {
+    expect(
+      resetPrompt({
+        systemPrompt: '',
+        provider: { baseUrl: 'https://own.example.test/v1' },
+      })
+    ).toEqual({ provider: { baseUrl: 'https://own.example.test/v1' } });
+  });
+
+  it('shows the file prompt until it is edited and after a reset', () => {
+    expect(promptEditorState(VIEW, {})).toEqual({
+      value: 'built-in prompt',
+      edited: false,
+    });
+    expect(promptEditorState(VIEW, { systemPrompt: '' })).toEqual({
+      value: '',
+      edited: true,
+    });
   });
 
   it('clears the provider override when the field becomes empty', () => {

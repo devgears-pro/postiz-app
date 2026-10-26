@@ -99,6 +99,13 @@ describe('resolveAgentConfig', () => {
     expect(config.sources.prompt).toBe('organization');
   });
 
+  it('treats an empty prompt as an explicit organization override', () => {
+    const config = resolve(validOverrides({ systemPrompt: '' }));
+
+    expect(config.prompt).toBe('');
+    expect(config.sources.prompt).toBe('organization');
+  });
+
   it('returns the current default after the override is removed', () => {
     const overridden = resolve(validOverrides({ systemPrompt: 'Own rules' }));
     const restored = resolve(validOverrides());
@@ -311,6 +318,22 @@ describe('toAgentConfigView', () => {
     expect(view.capabilities.builtinTools).toEqual(
       DEFAULTS.allowedBuiltinTools
     );
+  });
+
+  it('keeps an empty prompt override for the form', () => {
+    const view = toAgentConfigView(
+      DEFAULTS,
+      validOverrides({ systemPrompt: '' }),
+      1,
+      {
+        provider: { source: 'system', configured: true },
+        mcp: {},
+      }
+    );
+
+    expect(view.overrides.systemPrompt).toBe('');
+    expect(view.effective.prompt).toBe('');
+    expect(view.sources.prompt).toBe('organization');
   });
 
   it('keeps inherited skills visible for the form', () => {

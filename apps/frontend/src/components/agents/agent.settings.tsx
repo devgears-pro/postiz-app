@@ -11,6 +11,8 @@ import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { useUser } from '@gitroom/frontend/components/layout/user.context';
 import {
   isDirty,
+  promptEditorState,
+  resetPrompt,
   setPrompt,
   setProvider,
   toWriteRequest,
@@ -65,8 +67,6 @@ export const AgentSettings: FC = () => {
     setStatus(null);
   }, [view?.revision, orgId]);
 
-  const promptValue = overrides.systemPrompt ?? view?.defaults.prompt ?? '';
-  const promptOverridden = overrides.systemPrompt !== undefined;
   const providerValue =
     overrides.provider?.baseUrl ?? view?.defaults.provider.baseUrl ?? '';
   const providerOverridden = overrides.provider !== undefined;
@@ -93,6 +93,8 @@ export const AgentSettings: FC = () => {
       </div>
     );
   }
+
+  const promptState = promptEditorState(view, overrides);
 
   const save = async () => {
     setSaving(true);
@@ -248,21 +250,20 @@ export const AgentSettings: FC = () => {
           <h3 className="text-[18px] font-[500] flex-1">
             {t('agent_prompt_title', 'System prompt')}
           </h3>
-          <label className="flex items-center gap-[6px] text-[14px]">
-            <input
-              type="checkbox"
-              checked={promptOverridden}
-              onChange={(event) =>
-                setOverrides(
-                  setPrompt(
-                    overrides,
-                    event.target.checked ? promptValue : ''
-                  )
-                )
-              }
-            />
-            {t('agent_override', 'Override')}
-          </label>
+          {promptState.edited && (
+            <>
+              <span className="text-[11px] text-[#c9a7ff] bg-[#612bd3]/20 border border-[#4a2a86] rounded-full px-[8px] py-[1px]">
+                {t('agent_prompt_edited', 'Edited')}
+              </span>
+              <button
+                type="button"
+                className="text-[12px] underline opacity-60 hover:opacity-100"
+                onClick={() => setOverrides(resetPrompt(overrides))}
+              >
+                {t('agent_prompt_reset', 'Reset')}
+              </button>
+            </>
+          )}
           <span className="text-[12px] opacity-60">
             {t('agent_source', 'source')}: {view.sources.prompt}
           </span>
@@ -270,8 +271,7 @@ export const AgentSettings: FC = () => {
         <textarea
           rows={14}
           className={inputClass}
-          disabled={!promptOverridden}
-          value={promptOverridden ? promptValue : view.defaults.prompt}
+          value={promptState.value}
           onChange={(event) =>
             setOverrides(setPrompt(overrides, event.target.value))
           }
