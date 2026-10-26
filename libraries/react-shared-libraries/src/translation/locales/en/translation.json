@@ -908,7 +908,6 @@
   "agent_settings_reset_all": "Reset all overrides",
   "agent_revision": "revision",
   "agent_prompt_title": "System prompt",
-  "agent_override": "Override",
   "agent_source": "source",
   "agent_model_title": "Model and provider",
   "agent_provider_url": "Provider base URL",
@@ -942,5 +941,7 @@
   "agent_mcp_id": "Server id (lowercase, hyphens)",
   "agent_mcp_ok": "Tools found:",
   "agent_mcp_failed": "The MCP server did not answer.",
-  "agent_secret_keep": "••••••• saved, leave empty to keep"
+  "agent_secret_keep": "••••••• saved, leave empty to keep",
+  "agent_prompt_edited": "Edited",
+  "agent_prompt_reset": "Reset"
 }

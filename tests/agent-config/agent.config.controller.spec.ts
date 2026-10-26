@@ -73,6 +73,20 @@ describe('AgentConfigController', () => {
     });
   });
 
+  it('accepts an empty prompt override', async () => {
+    const { controller, service } = buildController();
+
+    await controller.save(ORG, USER, {
+      expectedRevision: 3,
+      overrides: { systemPrompt: '' },
+    });
+
+    expect(service.save).toHaveBeenCalledWith('org-1', 'user-1', {
+      expectedRevision: 3,
+      overrides: { systemPrompt: '' },
+    });
+  });
+
   it('resets with the expected revision', async () => {
     const { controller, service } = buildController();
 

@@ -56,15 +56,23 @@ export const formMcpServers = (view: AgentConfigView): FormMcpServer[] => {
 export const setPrompt = (
   overrides: AgentConfigOverrides,
   value: string
+): AgentConfigOverrides => ({ ...overrides, systemPrompt: value });
+
+export const resetPrompt = (
+  overrides: AgentConfigOverrides
 ): AgentConfigOverrides => {
   const next = { ...overrides };
-  if (!value.trim()) {
-    delete next.systemPrompt;
-  } else {
-    next.systemPrompt = value;
-  }
+  delete next.systemPrompt;
   return next;
 };
+
+export const promptEditorState = (
+  view: AgentConfigView,
+  overrides: AgentConfigOverrides
+): { value: string; edited: boolean } => ({
+  value: overrides.systemPrompt ?? view.defaults.prompt,
+  edited: overrides.systemPrompt !== undefined,
+});
 
 export const setSkillEnabled = (
   view: AgentConfigView,

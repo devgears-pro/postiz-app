@@ -1231,7 +1231,6 @@
   "agent_settings_reset_all": "Скинути всі перевизначення",
   "agent_revision": "версія",
   "agent_prompt_title": "Системний промпт",
-  "agent_override": "Перевизначити",
   "agent_source": "джерело",
   "agent_model_title": "Модель і провайдер",
   "agent_provider_url": "Базова адреса провайдера",
@@ -1265,5 +1264,7 @@
   "agent_mcp_id": "ID сервера (малими літерами, дефіси)",
   "agent_mcp_ok": "Знайдені інструменти:",
   "agent_mcp_failed": "MCP-сервер не відповів.",
-  "agent_secret_keep": "••••••• збережено, залишіть порожнім, щоб не змінювати"
+  "agent_secret_keep": "••••••• збережено, залишіть порожнім, щоб не змінювати",
+  "agent_prompt_edited": "Змінено",
+  "agent_prompt_reset": "Скинути"
 }

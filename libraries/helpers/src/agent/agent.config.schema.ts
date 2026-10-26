@@ -249,7 +249,6 @@ export const agentConfigOverridesSchema = z
   .object({
     systemPrompt: z
       .string()
-      .min(1)
       .refine(
         (value) => byteLength(value) <= AGENT_CONFIG_LIMITS.promptBytes,
         'Prompt is too large'
