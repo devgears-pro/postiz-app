@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { Provider, User } from '@prisma/client';
 import { CreateOrgUserDto } from '@gitroom/nestjs-libraries/dtos/auth/create.org.user.dto';
+import { AdminCreateOrganizationDto } from '@gitroom/nestjs-libraries/dtos/auth/admin.create.organization.dto';
 import { LoginUserDto } from '@gitroom/nestjs-libraries/dtos/auth/login.user.dto';
 import { UsersService } from '@gitroom/nestjs-libraries/database/prisma/users/users.service';
 import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/organizations/organization.service';
@@ -19,6 +20,46 @@ export class AuthService {
     private _emailService: EmailService,
     private _providerManager: AuthProviderManager
   ) {}
+  async createLocalOrganization(
+    body: AdminCreateOrganizationDto,
+    ip: string,
+    userAgent: string
+  ) {
+    const email = body.email.trim().toLowerCase();
+    const existing = await this._userService.getUserByEmail(email);
+    if (existing) {
+      throw new ConflictException('Email already exists');
+    }
+
+    const created = await this._organizationService.createOrgAndUser(
+      {
+        company: body.company.trim(),
+        email,
+        password: body.password,
+        provider: Provider.LOCAL,
+        datafast_visitor_id: '',
+      },
+      ip,
+      userAgent
+    );
+
+    const owner = created.users[0].user;
+    if (!owner.activated) {
+      const activationJwt = await this.jwt(owner);
+      await this._emailService.sendEmailSync(
+        owner.email,
+        'Activate your account',
+        `Click <a href="${process.env.FRONTEND_URL}/auth/activate/${activationJwt}">here</a> to activate your account`
+      );
+    }
+
+    return {
+      organizationId: created.id,
+      ownerId: owner.id,
+      activationRequired: !owner.activated,
+    };
+  }
+
   async canRegister(provider: string) {
     if (
       process.env.DISABLE_REGISTRATION !== 'true' ||

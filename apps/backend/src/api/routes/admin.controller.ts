@@ -1,7 +1,10 @@
 import {
+  Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpException,
+  Post,
   Query,
 } from '@nestjs/common';
 import { GetUserFromRequest } from '@gitroom/nestjs-libraries/user/user.from.request';
@@ -9,6 +12,10 @@ import { User } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
 import { ErrorsService } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.service';
 import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.service';
+import { AuthService } from '@gitroom/backend/services/auth/auth.service';
+import { AdminCreateOrganizationDto } from '@gitroom/nestjs-libraries/dtos/auth/admin.create.organization.dto';
+import { RealIP } from 'nestjs-real-ip';
+import { UserAgent } from '@gitroom/nestjs-libraries/user/user.agent';
 import dayjs from 'dayjs';
 
 @ApiTags('Admin')
@@ -16,13 +23,28 @@ import dayjs from 'dayjs';
 export class AdminController {
   constructor(
     private _errorsService: ErrorsService,
-    private _adminStatsService: AdminStatsService
+    private _adminStatsService: AdminStatsService,
+    private _authService: AuthService
   ) {}
 
   private assertSuperAdmin(user: User) {
     if (!user?.isSuperAdmin) {
       throw new HttpException('Unauthorized', 400);
     }
+  }
+
+  @Post('/organizations')
+  async createOrganization(
+    @GetUserFromRequest() user: User,
+    @Body() body: AdminCreateOrganizationDto,
+    @RealIP() ip: string,
+    @UserAgent() userAgent: string
+  ) {
+    if (!user?.isSuperAdmin) {
+      throw new ForbiddenException('Unauthorized');
+    }
+
+    return this._authService.createLocalOrganization(body, ip, userAgent);
   }
 
   @Get('/errors')
