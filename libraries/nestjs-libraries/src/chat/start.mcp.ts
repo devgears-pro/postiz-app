@@ -69,7 +69,9 @@ export const startMcp = async (app: INestApplication) => {
 
   const mastra = await mastraService.mastra();
   const agent = mastra.getAgent('postiz');
-  const agentTools = await agent.listTools();
+  // The raw tool catalog is static; per-organization tools are resolved from
+  // the request context inside the agent, never exposed as global MCP tools.
+  const agentTools = await loadToolsService.loadTools();
   const tools = {
     ...agentTools,
     // tools that only make sense inside an MCP host (ui:// widgets)

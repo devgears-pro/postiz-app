@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Agent } from '@gitroom/frontend/components/agents/agent';
+import { AgentShell } from '@gitroom/frontend/components/agents/agent.shell';
 export const metadata: Metadata = {
   title: 'Postiz - Agent',
   description: 'agents',
@@ -9,5 +9,5 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Agent>{children}</Agent>;
+  return <AgentShell>{children}</AgentShell>;
 }

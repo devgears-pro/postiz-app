@@ -178,6 +178,36 @@ The main difference is the infrastructure you need to own, approval from social 
 <br />
 <br />
   
+## Agent configuration (DevGears fork)
+
+The Copilot agent reads its defaults from environment variables and an optional
+shared directory, and lets each organization override them in the UI at
+`/agents/settings`. Organizations never share prompts, skills, MCP servers or
+credentials.
+
+Environment defaults:
+
+| Variable | Purpose |
+| --- | --- |
+| `POSTIZ_AI_CONFIG_DIR` | Read-only directory mounted into the container, for example `/config/postiz-ai` |
+| `POSTIZ_AI_PROMPT_FILE` | Prompt file inside the shared directory |
+| `POSTIZ_AI_SKILLS_DIR` | Directory with `SKILL.md` skills inside the shared directory |
+| `POSTIZ_AI_MODEL` / `POSTIZ_AI_TITLE_MODEL` | Chat and thread-title models |
+| `POSTIZ_AI_MAX_STEPS`, `POSTIZ_AI_MAX_OUTPUT_TOKENS`, `POSTIZ_AI_TEMPERATURE` | Generation limits |
+| `POSTIZ_AI_ENCRYPTION_KEY` | 32-byte hex or base64 key that encrypts organization credentials |
+| `OPENAI_BASE_URL` / `OPENAI_API_KEY` | OpenAI-compatible provider used by default |
+| `LANGFUSE_BASE_URL`, `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` | Optional Langfuse tracing |
+
+The shared directory may contain `agent.json` (`promptFile`, `skills`, `model`,
+`provider`, `mcpServers`, `generation`, `langfuse`) plus `prompt.md` and
+`skills/<name>/SKILL.md`. Files are read at startup; organization overrides are
+applied from the next agent run. Set `captureContent` to store message text in
+traces; by default only metadata is exported.
+
+MCP connections use public HTTPS URLs with a DNS-pinned SSRF guard. Deployment
+defaults may point at private addresses, but an organization cannot grant
+itself that trust. Only the tools selected in the UI are exposed to the agent.
+
 ## Postiz Compliance
 
 - This GitHub repository contains the open-source, self-hosted edition of Postiz. Postiz is also available as Postiz Cloud, a fully managed service at postiz.com.

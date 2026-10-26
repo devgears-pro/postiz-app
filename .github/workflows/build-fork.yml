@@ -21,7 +21,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test:
+    uses: ./.github/workflows/test-agent-config.yml
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

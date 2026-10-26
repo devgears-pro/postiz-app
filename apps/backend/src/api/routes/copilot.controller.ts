@@ -7,9 +7,11 @@ import {
   Res,
   Query,
   Param,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import {
   CopilotRuntime,
+  EmptyAdapter,
   OpenAIAdapter,
   copilotRuntimeNodeHttpEndpoint,
 } from '@copilotkit/runtime';
@@ -22,6 +24,7 @@ import { Request, Response } from 'express';
 import { RequestContext } from '@mastra/core/di';
 import { CheckPolicies } from '@gitroom/backend/services/auth/permissions/permissions.ability';
 import { AuthorizationActions, Sections } from '@gitroom/backend/services/auth/permissions/permission.exception.class';
+import { AgentRuntimeService } from '@gitroom/nestjs-libraries/chat/agent.runtime';
 
 export type ChannelsContext = {
   integrations: string;
@@ -43,7 +46,8 @@ const copilotCors = () => ({
 export class CopilotController {
   constructor(
     private _subscriptionService: SubscriptionService,
-    private _mastraService: MastraService
+    private _mastraService: MastraService,
+    private _agentRuntime: AgentRuntimeService
   ) {}
   @Post('/chat')
   chatAgent(@Req() req: Request, @Res() res: Response) {
@@ -74,14 +78,28 @@ export class CopilotController {
     @Res() res: Response,
     @GetOrgFromRequest() organization: Organization
   ) {
-    if (
-      process.env.OPENAI_API_KEY === undefined ||
-      process.env.OPENAI_API_KEY === ''
-    ) {
-      Logger.warn('OpenAI API key not set, chat functionality will not work');
-      return;
-    }
     const mastra = await this._mastraService.mastra();
+
+    const prepared = await this._agentRuntime
+      .prepare(organization.id, { ui: true })
+      .catch((error) => {
+        Logger.warn(
+          `Could not prepare the agent for ${organization.id}: ${error}`
+        );
+        throw new ServiceUnavailableException(
+          'The agent is not configured correctly for this organization'
+        );
+      });
+
+    let released = false;
+    const release = () => {
+      if (released) return;
+      released = true;
+      prepared.release().catch(() => undefined);
+    };
+    res.on('finish', release);
+    res.on('close', release);
+
     const requestContext = new RequestContext<ChannelsContext>();
     requestContext.set(
       'integrations',
@@ -90,6 +108,9 @@ export class CopilotController {
 
     requestContext.set('organization', JSON.stringify(organization));
     requestContext.set('ui', 'true');
+    const threadId = req?.body?.threadId || req?.body?.body?.threadId;
+    if (threadId) requestContext.set('threadId' as never, threadId as never);
+    prepared.applyTo(requestContext);
 
     const agents = MastraAgent.getLocalAgents({
       resourceId: organization.id,
@@ -105,9 +126,7 @@ export class CopilotController {
       endpoint: '/copilot/agent',
       cors: copilotCors(),
       runtime,
-      serviceAdapter: new OpenAIAdapter({
-        model: 'gpt-4.1',
-      }),
+      serviceAdapter: new EmptyAdapter(),
     });
 
     return copilotRuntimeHandler(req, res);

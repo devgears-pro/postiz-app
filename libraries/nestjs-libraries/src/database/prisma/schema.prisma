@@ -45,11 +45,25 @@ model Organization {
   webhooks            Webhooks[]
   oauthApp            OAuthApp[]
   oauthAuthorizations OAuthAuthorization[]
+  agentConfig         OrganizationAgentConfig?
 
   @@index([apiKey])
   @@index([streakSince])
   @@index([paymentId])
   @@index([deletedAt])
+}
+
+model OrganizationAgentConfig {
+  organizationId   String       @id
+  schemaVersion    Int          @default(1)
+  revision         Int          @default(1)
+  overrides        Json
+  encryptedSecrets String?
+  secretSummary    Json?
+  updatedById      String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Tags {
