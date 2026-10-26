@@ -34,6 +34,14 @@ describe('AdminController.createOrganization', () => {
     expect(authService.createLocalOrganization).not.toHaveBeenCalled();
   });
 
+  it('rejects an unauthenticated caller with 401', async () => {
+    await expect(
+      controller.createOrganization(undefined as any, BODY, '127.0.0.1', 'jest')
+    ).rejects.toMatchObject({ status: 401 });
+
+    expect(authService.createLocalOrganization).not.toHaveBeenCalled();
+  });
+
   it('creates an organization for a global administrator', async () => {
     authService.createLocalOrganization.mockResolvedValue({
       organizationId: 'org-1',

@@ -23,6 +23,11 @@ const hideContentProcessor: SpanOutputProcessor = {
   shutdown: async () => undefined,
 };
 
+const noopExporter = {
+  name: 'postiz-disabled',
+  exportTracingEvent: async () => undefined,
+};
+
 @Injectable()
 export class AgentObservabilityService implements OnApplicationShutdown {
   private _logger = new Logger(AgentObservabilityService.name);
@@ -34,7 +39,7 @@ export class AgentObservabilityService implements OnApplicationShutdown {
     const configs: Record<string, Record<string, unknown>> = {
       disabled: {
         serviceName: SERVICE_NAME,
-        exporters: [],
+        exporters: [noopExporter],
         requestContextKeys: REQUEST_CONTEXT_KEYS,
       },
     };

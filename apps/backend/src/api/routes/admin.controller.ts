@@ -40,8 +40,12 @@ export class AdminController {
     @RealIP() ip: string,
     @UserAgent() userAgent: string
   ) {
-    if (!user?.isSuperAdmin) {
-      throw new ForbiddenException('Unauthorized');
+    if (!user) {
+      throw new HttpException('Unauthorized', 401);
+    }
+
+    if (!user.isSuperAdmin) {
+      throw new ForbiddenException('Forbidden');
     }
 
     return this._authService.createLocalOrganization(body, ip, userAgent);

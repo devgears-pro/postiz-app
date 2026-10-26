@@ -9,12 +9,12 @@ module.exports = {
   rootDir: '.',
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
-  testMatch: ['**/*.spec.ts'],
+  testMatch: ['**/*.spec.ts', '**/*.spec.tsx'],
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsconfig: '<rootDir>/tsconfig.base.json',
+        tsconfig: '<rootDir>/tsconfig.jest.json',
         isolatedModules: true,
       },
     ],
