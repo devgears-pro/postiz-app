@@ -150,13 +150,6 @@ export const pruneSecrets = (secrets: SecretChanges): SecretChanges => {
   );
   if (Object.keys(tokens).length) next.mcpBearerTokens = tokens;
 
-  if (secrets.langfuse?.publicKey && secrets.langfuse?.secretKey) {
-    next.langfuse = {
-      publicKey: secrets.langfuse.publicKey,
-      secretKey: secrets.langfuse.secretKey,
-    };
-  }
-
   return next;
 };
 

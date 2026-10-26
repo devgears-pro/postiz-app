@@ -23,6 +23,7 @@ import { LogoutComponent } from '@gitroom/frontend/components/layout/logout.comp
 import { useSearchParams } from 'next/navigation';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { PublicComponent } from '@gitroom/frontend/components/public-api/public.component';
+import { AgentSettings } from '@gitroom/frontend/components/agents/agent.settings';
 import Link from 'next/link';
 import { Webhooks } from '@gitroom/frontend/components/webhooks/webhooks';
 import { Sets } from '@gitroom/frontend/components/sets/sets';
@@ -219,14 +220,14 @@ export const SettingsPopup: FC<{
                 </div>
               )}
 
-              {tab === 'agents' &&
-                !!user?.tier?.public_api &&
-                isGeneral &&
-                showLogout && (
-                  <div>
+              {tab === 'agents' && (
+                <div className="flex flex-col gap-[24px]">
+                  {user?.role !== 'USER' && <AgentSettings />}
+                  {!!user?.tier?.public_api && isGeneral && showLogout && (
                     <PublicComponent />
-                  </div>
-                )}
+                  )}
+                </div>
+              )}
 
               {tab === 'apps' && (
                 <div>

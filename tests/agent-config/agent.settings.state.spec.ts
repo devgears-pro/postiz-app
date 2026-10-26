@@ -195,14 +195,6 @@ describe('agent settings state', () => {
     expect(request.expectedRevision).toBe(4);
   });
 
-  it('requires both Langfuse keys before sending them', () => {
-    const request = toWriteRequest(VIEW, {}, {
-      langfuse: { publicKey: 'pk', secretKey: '' },
-    });
-
-    expect(request.secrets).toBeUndefined();
-  });
-
   it('detects unchanged and changed drafts', () => {
     expect(isDirty(VIEW, {}, {})).toBe(false);
     expect(isDirty(VIEW, { systemPrompt: 'Own' }, {})).toBe(true);

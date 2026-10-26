@@ -45,7 +45,6 @@ export type ResolvedAgentBundle = {
 const emptySummary = (): AgentSecretSummary => ({
   providerApiKey: false,
   mcp: [],
-  langfuse: false,
 });
 
 const readOverrides = (record: AgentConfigRecord | null): AgentConfigOverrides => {
@@ -76,7 +75,6 @@ const applySecretChanges = (
     ...(current.mcpBearerTokens
       ? { mcpBearerTokens: { ...current.mcpBearerTokens } }
       : {}),
-    ...(current.langfuse ? { langfuse: { ...current.langfuse } } : {}),
   };
 
   if (changes.providerApiKey === null) {
@@ -94,23 +92,6 @@ const applySecretChanges = (
   }
   if (next.mcpBearerTokens && Object.keys(next.mcpBearerTokens).length === 0) {
     delete next.mcpBearerTokens;
-  }
-
-  if (changes.langfuse) {
-    const publicKey =
-      changes.langfuse.publicKey === undefined
-        ? next.langfuse?.publicKey
-        : (changes.langfuse.publicKey ?? undefined);
-    const secretKey =
-      changes.langfuse.secretKey === undefined
-        ? next.langfuse?.secretKey
-        : (changes.langfuse.secretKey ?? undefined);
-
-    if (publicKey && secretKey) {
-      next.langfuse = { publicKey, secretKey };
-    } else {
-      delete next.langfuse;
-    }
   }
 
   return next;
@@ -287,19 +268,6 @@ export class AgentConfigService {
       });
     }
 
-    if (config.langfuse.credential === 'organization' && !secrets.langfuse) {
-      throw new BadRequestException({
-        message: 'A custom Langfuse host requires both Langfuse keys',
-      });
-    }
-
-    if (config.langfuse.credential !== 'organization' && secrets.langfuse) {
-      throw new BadRequestException({
-        message:
-          'Set a custom Langfuse host before adding your own Langfuse keys',
-      });
-    }
-
     const serverIds = new Set(config.mcpServers.map((server) => server.id));
     for (const id of Object.keys(secrets.mcpBearerTokens ?? {})) {
       if (!serverIds.has(id)) {
@@ -349,15 +317,6 @@ export class AgentConfigService {
           },
         ])
       ),
-      langfuse: {
-        source: resolved.langfuse.credential,
-        configured:
-          resolved.langfuse.credential === 'system'
-            ? Boolean(defaults.langfuse.langfuseCredentialConfigured)
-            : resolved.langfuse.credential === 'organization'
-              ? summary.langfuse
-              : false,
-      },
     };
 
     return toAgentConfigView(defaults, overrides, revision, credentials);

@@ -89,6 +89,18 @@ describe('AgentConfigController', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
+  it('rejects a Langfuse override from the organization', async () => {
+    const { controller, service } = buildController();
+
+    await expect(
+      controller.save(ORG, USER, {
+        expectedRevision: 3,
+        overrides: { langfuse: { enabled: false } },
+      })
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(service.save).not.toHaveBeenCalled();
+  });
+
   it('tests a provider only against the loaded revision', async () => {
     const { controller, connections } = buildController();
 

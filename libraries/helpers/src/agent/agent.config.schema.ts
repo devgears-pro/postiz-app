@@ -45,20 +45,11 @@ export type AgentConfigOverrides = {
   skills?: Record<string, SkillDefinition | null>;
   mcpServers?: Record<string, McpServerDefinition | null>;
   generation?: GenerationSettings;
-  langfuse?: {
-    enabled?: boolean;
-    baseUrl?: string;
-    captureContent?: boolean;
-  };
 };
 
 export type SecretChanges = {
   providerApiKey?: string | null;
   mcpBearerTokens?: Record<string, string | null>;
-  langfuse?: {
-    publicKey?: string | null;
-    secretKey?: string | null;
-  };
 };
 
 export type SystemMcpServer = McpServerDefinition & {
@@ -120,7 +111,6 @@ export type ResolvedAgentConfig = {
     enabled: boolean;
     baseUrl?: string;
     captureContent: boolean;
-    credential: 'system' | 'organization' | 'none';
   };
   sources: Record<string, ConfigSource>;
 };
@@ -131,10 +121,6 @@ export type CredentialStatus = {
     configured: boolean;
   };
   mcp: Record<string, { source: 'system' | 'organization' | 'none'; configured: boolean }>;
-  langfuse: {
-    source: 'system' | 'organization' | 'none';
-    configured: boolean;
-  };
 };
 
 export type AgentConfigView = {
@@ -149,11 +135,6 @@ export type AgentConfigView = {
     skills: SkillDefinition[];
     mcpServers: Array<McpServerDefinition & { id: string }>;
     generation: GenerationSettings;
-    langfuse: {
-      enabled: boolean;
-      baseUrl?: string;
-      captureContent: boolean;
-    };
   };
   overrides: AgentConfigOverrides;
   effective: {
@@ -165,16 +146,10 @@ export type AgentConfigView = {
     skills: Array<SkillDefinition & { source: ConfigSource }>;
     mcpServers: Array<McpServerDefinition & { id: string; source: ConfigSource }>;
     generation: GenerationSettings;
-    langfuse: {
-      enabled: boolean;
-      baseUrl?: string;
-      captureContent: boolean;
-    };
   };
   sources: Record<string, ConfigSource>;
   capabilities: {
     builtinTools: string[];
-    langfuseBaseUrls: string[];
   };
   credentials: CredentialStatus;
 };
@@ -270,14 +245,6 @@ export const generationSettingsSchema = z
   })
   .strict();
 
-export const langfuseOverrideSchema = z
-  .object({
-    enabled: z.boolean().optional(),
-    baseUrl: httpsUrlSchema.optional(),
-    captureContent: z.boolean().optional(),
-  })
-  .strict();
-
 export const agentConfigOverridesSchema = z
   .object({
     systemPrompt: z
@@ -295,7 +262,6 @@ export const agentConfigOverridesSchema = z
     skills: z.record(slugSchema, skillDefinitionSchema.nullable()).optional(),
     mcpServers: z.record(slugSchema, mcpServerDefinitionSchema.nullable()).optional(),
     generation: generationSettingsSchema.optional(),
-    langfuse: langfuseOverrideSchema.optional(),
   })
   .strict()
   .refine(
@@ -308,13 +274,6 @@ export const secretChangesSchema = z
     providerApiKey: z.string().min(1).max(4096).nullable().optional(),
     mcpBearerTokens: z
       .record(slugSchema, z.string().min(1).max(4096).nullable())
-      .optional(),
-    langfuse: z
-      .object({
-        publicKey: z.string().min(1).max(4096).nullable().optional(),
-        secretKey: z.string().min(1).max(4096).nullable().optional(),
-      })
-      .strict()
       .optional(),
   })
   .strict();
@@ -419,14 +378,6 @@ export function validateOverrides(
         message: `${tool} is not available on this deployment`,
       });
     }
-  }
-
-  const langfuseBaseUrl = overrides.langfuse?.baseUrl;
-  if (langfuseBaseUrl && !defaults.langfuse.allowedBaseUrls.includes(langfuseBaseUrl)) {
-    issues.push({
-      path: 'langfuse.baseUrl',
-      message: 'This Langfuse host is not allowed by the deployment',
-    });
   }
 
   const providerBaseUrl = overrides.provider?.baseUrl;
@@ -535,19 +486,6 @@ export function resolveAgentConfig(
   const builtinTools = overrides.builtinTools ?? defaults.builtinTools;
   const generation = mergeGeneration(defaults.generation, overrides.generation);
 
-  const langfuseEnabled = overrides.langfuse?.enabled ?? defaults.langfuse.enabled;
-  const langfuseBaseUrl = overrides.langfuse?.baseUrl ?? defaults.langfuse.baseUrl;
-  const langfuseCapture =
-    overrides.langfuse?.captureContent ?? defaults.langfuse.captureContent;
-  const langfuseCredential: ResolvedAgentConfig['langfuse']['credential'] =
-    !langfuseEnabled || !langfuseBaseUrl
-      ? 'none'
-      : overrides.langfuse?.baseUrl
-        ? 'organization'
-        : defaults.langfuse.publicKeyEnv && defaults.langfuse.secretKeyEnv
-          ? 'system'
-          : 'none';
-
   const sources: Record<string, ConfigSource> = {
     prompt: overrides.systemPrompt !== undefined
       ? 'organization'
@@ -568,7 +506,7 @@ export function resolveAgentConfig(
         ? 'organization'
         : defaults.sources.builtinTools,
     generation: overrides.generation ? 'organization' : defaults.sources.generation,
-    langfuse: overrides.langfuse ? 'organization' : defaults.sources.langfuse,
+    langfuse: defaults.sources.langfuse,
     skills: overrides.skills ? 'organization' : (defaults.sources.skills ?? 'builtin'),
     mcpServers: overrides.mcpServers
       ? 'organization'
@@ -591,10 +529,9 @@ export function resolveAgentConfig(
     mcpServers: mergeMcpServers(defaults, overrides),
     generation,
     langfuse: {
-      enabled: langfuseEnabled,
-      baseUrl: langfuseBaseUrl,
-      captureContent: langfuseCapture,
-      credential: langfuseCredential,
+      enabled: defaults.langfuse.enabled,
+      baseUrl: defaults.langfuse.baseUrl,
+      captureContent: defaults.langfuse.captureContent,
     },
     sources,
   };
@@ -630,11 +567,6 @@ export function toAgentConfigView(
       skills: sharedSkills(defaults),
       mcpServers: sharedMcpServers(defaults),
       generation: { ...defaults.generation },
-      langfuse: {
-        enabled: defaults.langfuse.enabled,
-        baseUrl: defaults.langfuse.baseUrl,
-        captureContent: defaults.langfuse.captureContent,
-      },
     },
     overrides,
     effective: {
@@ -648,16 +580,10 @@ export function toAgentConfigView(
         ({ credential, bearerTokenEnv, ...server }) => server
       ),
       generation: resolved.generation,
-      langfuse: {
-        enabled: resolved.langfuse.enabled,
-        baseUrl: resolved.langfuse.baseUrl,
-        captureContent: resolved.langfuse.captureContent,
-      },
     },
     sources: resolved.sources,
     capabilities: {
       builtinTools: [...defaults.allowedBuiltinTools],
-      langfuseBaseUrls: [...defaults.langfuse.allowedBaseUrls],
     },
     credentials,
   };
